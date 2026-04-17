@@ -477,7 +477,8 @@ with tab_fc:
             # If target matches, ensure features match too
             if is_compatible:
                 f_params = FeatureParams(
-                    (1, 2, 4, 8, 12, 26, 52), (4, 8, 12, 26), True, str(y_col), date_col
+                    lags=(1, 2, 4, 8, 12, 26, 52), rolling_windows=(4, 8, 12, 26),
+                    include_autoregressive=True, target_column=str(y_col), date_column=date_col
                 )
                 try:
                     feat_last = last_complete_feature_row(df, horizon_weeks=int(horizon), params=f_params)
@@ -491,11 +492,8 @@ with tab_fc:
             try:
                 # ── Robust Prediction initialization ──────────────────────────
                 f_params = FeatureParams(
-                    (1, 2, 4, 8, 12, 26, 52),
-                    (4, 8, 12, 26), 
-                    True, 
-                    str(y_col),
-                    date_col
+                    lags=(1, 2, 4, 8, 12, 26, 52), rolling_windows=(4, 8, 12, 26),
+                    include_autoregressive=True, target_column=str(y_col), date_column=date_col
                 )
 
                 pred = predict_next(
@@ -693,7 +691,7 @@ with tab_fc:
                     with st.spinner(f"Benchmarking best architecture for {y_col} …"):
                         art = train_model(
                             df, city=city, horizon_weeks=int(horizon),
-                            params=FeatureParams((1, 2, 4, 8, 12, 26, 52), (4, 8, 12, 26), True, str(y_col), date_col),
+                            params=FeatureParams(lags=(1, 2, 4, 8, 12, 26, 52), rolling_windows=(4, 8, 12, 26), include_autoregressive=True, target_column=str(y_col), date_column=date_col),
                             target_column=y_col,
                             fast_mode=not mode.startswith("🦟")
                         )

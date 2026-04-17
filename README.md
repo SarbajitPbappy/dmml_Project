@@ -1,73 +1,78 @@
-# RetroX: Climate-Driven Dengue Outbreak Prediction (DMML)
+# 🦟 RetroX: Universal AI Forecasting Engine
 
-End-to-end, production-style project that predicts weekly dengue cases **4 weeks ahead** using climate signals (temperature, rainfall, humidity, NDVI) + epidemiological momentum, and turns forecasts into **actionable 3-level alerts**.
+![Project Status](https://img.shields.io/badge/Status-Production--Ready-success)
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
+![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B)
+![Scikit-Learn](https://img.shields.io/badge/ML-Scikit--Learn-F7931E)
+![Optuna](https://img.shields.io/badge/AutoML-Optuna-4B8BBE)
 
-## What you get
-- **Forecasting**: train/evaluate models with time-series CV (no leakage)
-- **Feature engineering**: lags (1–4w), rolling means (4/8w), autoregressive case terms
-- **ERI (Epidemic Risk Index)**: interpretable climate-only risk score \([0,1]\)
-- **ERS (Epidemic Risk Score)**: Normal / Elevated / High alert levels from predicted cases
-- **Explainability**: SHAP-based local & global explanations (tree models)
-- **API service**: FastAPI endpoints for forecast, alert, and “what-if” climate simulation
-- **Dashboard**: Streamlit app for decision-makers
-- **Ops**: Docker, model artifact versioning, basic drift checks
+**RetroX** is a production-ready, universal time-series forecasting engine. Originally engineered to conquer the DengAI epidemiological forecasting challenge, the platform has fundamentally evolved to support **any arbitrary tabular dataset**. 
 
-## Dataset (DengAI)
-This project auto-detects DengAI files from either:
-- `data/raw/dengai/` (canonical), or
-- `data/` (direct Kaggle export folder)
+RetroX bypasses traditional notebook workflows, providing an end-to-end laboratory that ingests data, performs Automated Exploratory Data Analysis (EDA), synthesizes deep chronological features, optimizes hyper-parameters, and delivers SHAP-driven predictive intelligence—all through a beautifully designed, responsive user interface.
 
-Supported filenames include both short and Kaggle-export names:
-- `dengue_features_train.csv`
-- `dengue_labels_train.csv`
-- `dengue_features_test.csv` (optional; for generating submissions)
-- `DengAI_Predicting_Disease_Spread_-_Training_Data_Features.csv`
-- `DengAI_Predicting_Disease_Spread_-_Training_Data_Labels.csv`
-- `DengAI_Predicting_Disease_Spread_-_Test_Data_Features.csv`
+## ✨ Core Features
 
-If you don’t have the dataset yet, download from Kaggle “DengAI: Predicting Disease Spread”.
+* **Universal Feature Engineering**: Automatically extracts chronological lags (1, 2, 4... 52 weeks) and rolling statistics exclusively for numeric targets, preventing catastrophic scaling errors on temporal/string columns.
+* **Dual-Mode AutoML**:
+  * **Exhaustive Mode**: Deep search execution testing Gradient Boosters, Random Forests, Extra Trees, and Ridge Regression over 10 optimization cycles utilizing TimeSeries Cross Validation.
+  * **Fast Universal Mode**: An ultra-fast heuristic engaged for custom uploads, shrinking optimization to the most reliable algorithms (HistGBM & RandomForest) and generating real-time models in seconds.
+* **Intelligent Data Lab**: Instantly processes unstructured CSVs to visualize distribution histograms, t-SNE dimensionality reduction, variance thresholds, and correlation matrices. 
+* **Dynamic UI Extensibility**: Instead of relying on static features, the dashboard intelligently shifts context. For Dengue tasks, it flags the Environmental Risk Index (ERI); for Custom Tasks (e.g., Finance/Operations), it automatically computes Anomaly Z-Scores and Trend Velocities.
+* **SHAP Explainability**: De-black-boxes the algorithms via waterfall plots, highlighting the exact vector influence (positive/negative) of individual features per forecast.
 
-## Quickstart
-Create an environment and install deps:
+## 🚀 Getting Started
 
+### Prerequisites
+
+* Python 3.11 or higher
+* `make` (optional, for utilizing the Makefile)
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repository-url>
+   cd "dmml project"
+   ```
+
+2. **Set up the virtual environment & install dependencies:**
+   ```bash
+   make venv
+   make install
+   ```
+
+3. **Verify the environment**:
+   ```bash
+   make verify
+   ```
+
+### Running the Platform
+
+To launch the RetroX dashboard locally:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
+make dashboard
+```
+The application will be served at `http://localhost:8501`.
+
+## 📁 Repository Structure
+
+```text
+├── retrox/
+│   ├── dashboard/         # Streamlit UI layers
+│   │   ├── app.py         # Main entry point and Forecast Hub
+│   │   └── lab_pipeline.py# Automated Data Lab & EDA logic
+│   ├── features/          # Deep logic for temporal engineering
+│   │   ├── engineering.py # Builds massive lag & rolling data matrices
+│   │   └── eri.py         # Dengue-specific Environmental Risk Index formulation
+│   └── models/            # Intelligence Pipeline
+│       ├── training.py    # Optuna HPO, Fast/Deep Model logic
+│       └── inference.py   # Prediction matrix, Artifact retrieval, SHAP execution
+├── artifacts/             # Persisted joblib model artifacts
+├── Makefile               # Streamlined command sequences
+├── capture_screenshots.py # Playwright automated visual reporting
+└── generate_final_report.py # Docx Lab Generation script
 ```
 
-Train and evaluate (default: RandomForest + time-series CV):
+## 🧠 Documentation
 
-```bash
-python -m retrox.cli.train --city sj --horizon 4
-python -m retrox.cli.evaluate --city sj
-```
-
-Run the API:
-
-```bash
-uvicorn retrox.api.main:app --reload
-```
-
-Run the dashboard:
-
-```bash
-streamlit run retrox/dashboard/app.py
-```
-
-## Project layout
-- `retrox/` - python package
-  - `data/` - loaders + schema utilities
-  - `features/` - lag/rolling/AR features + ERI
-  - `models/` - training, evaluation, persistence
-  - `explain/` - SHAP reports
-  - `api/` - FastAPI service
-  - `dashboard/` - Streamlit app
-- `artifacts/` - trained models, metrics, reports (created by scripts)
-- `data/` - local data (not committed)
-
-## Notes / defaults
-- **Forecast horizon** is configurable; PPT target is **4 weeks**.
-- **ERS thresholds** default to the PPT values: Normal \< 39, Elevated 39–71, High \> 71 (configurable).
-- **ERI weights** default to the PPT: Temp 0.35, Humidity 0.30, Rainfall 0.25, NDVI 0.10 (configurable).
-
+For a comprehensive technical deep-dive into the architectural decisions, pipeline workflows, error handling methodologies, and specific hyperparameter parameters, please refer to the [DOCUMENTATION.md](DOCUMENTATION.md) included in this repository.
