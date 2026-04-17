@@ -20,19 +20,27 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from retrox.data.dengai import dengai_files_available, load_dengai_train, write_demo_dataset
-from retrox.features.engineering import FeatureParams, last_complete_feature_row
-from retrox.features.ers import classify_ers
-from retrox.models.inference import load_latest_artifact, predict_next
-from retrox.models.registry import default_model_dir
-from retrox.models.training import train_model
-from retrox.dashboard.lab_pipeline import (
-    render_smart_eda,
-    render_preprocessing_controls,
-    render_tsne,
-    render_automl,
-    render_suggestions,
-)
+try:
+    from retrox.data.dengai import dengai_files_available, load_dengai_train, write_demo_dataset
+    from retrox.features.engineering import FeatureParams, last_complete_feature_row
+    from retrox.features.ers import classify_ers
+    from retrox.models.inference import load_latest_artifact, predict_next
+    from retrox.models.registry import default_model_dir
+    from retrox.models.training import train_model
+    from retrox.dashboard.lab_pipeline import (
+        render_smart_eda,
+        render_preprocessing_controls,
+        render_tsne,
+        render_automl,
+        render_suggestions,
+    )
+except Exception as e:
+    import traceback
+    import streamlit as st
+    st.error(f"**CRITICAL IMPORT ERROR**: {type(e).__name__}: {str(e)}")
+    st.warning("This usually means Streamlit Cloud failed to install a package in `requirements.txt`. Look at the exact missing package below:")
+    st.code(traceback.format_exc(), language="python")
+    st.stop()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Page config — MUST be first Streamlit call
